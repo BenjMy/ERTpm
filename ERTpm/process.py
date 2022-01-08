@@ -162,8 +162,7 @@ def read_labrecque(f):
         on_bad_lines='warn',
         comment='*',
     )
-    print(data)
-    print(data['stk'])
+    print('data set:\n{}'.format(data))
     invalid_data = data.loc[data['r'].isna()]
     if not invalid_data.empty:
         print('\n!!! found invalid data\n', invalid_data)
@@ -174,6 +173,7 @@ def read_labrecque(f):
     data['datetime'] = pd.to_datetime(data['datetime'], format='%Y%m%d_%H%M%S')
     data = data.astype(col_names_dtypes)
     data['stk'] = data['stk'] / np.abs(data['v']) * 100
+    print('data set:\n{}'.format(data))
     # elec using headers
     ec = {'El#': 'num', 'Elec-X': 'x', 'Elec-Y': 'y', 'Elec-Z': 'z'}
     et = {'num': 'Int16', 'x': float, 'y': float, 'z': float}
@@ -190,6 +190,7 @@ def read_labrecque(f):
     )
     elec = elec.rename(columns=ec)
     elec = elec.astype(et)
+    print('electrodes:\n{}'.format(elec))
     return(elec, data)
 
 

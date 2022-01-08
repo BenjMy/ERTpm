@@ -1,0 +1,6 @@
+file,datetime,process,invert,plot,fcsv,finv,fvtk,fpng
+AppRes_FreDom_DD2.Data,2019-04-27 12:13:34,True,True,True,processing/AppRes_FreDom_DD2.csv,./AppRes_FreDom_DD2.dat,inversion/AppRes_FreDom_DD2_inv.vtk,inversion/AppRes_FreDom_DD2_inv.png
+NoAppRes_FreDom_DD2.Data,2019-07-27 12:11:32,True,True,True,processing/NoAppRes_FreDom_DD2.csv,./NoAppRes_FreDom_DD2.dat,inversion/NoAppRes_FreDom_DD2_inv.vtk,inversion/NoAppRes_FreDom_DD2_inv.png
+NoAppRes_TW_DD2.Data,2019-12-18 11:27:10,True,True,True,processing/NoAppRes_TW_DD2.csv,./NoAppRes_TW_DD2.dat,inversion/NoAppRes_TW_DD2_inv.vtk,inversion/NoAppRes_TW_DD2_inv.png
+NoAppRes_TimeDom_GRAD.Data,2020-03-26 12:27:16,True,True,True,processing/NoAppRes_TimeDom_GRAD.csv,./NoAppRes_TimeDom_GRAD.dat,inversion/NoAppRes_TimeDom_GRAD_inv.vtk,inversion/NoAppRes_TimeDom_GRAD_inv.png
+HOTBENT2_6X1020211101_1330.Data,,,,,,,,

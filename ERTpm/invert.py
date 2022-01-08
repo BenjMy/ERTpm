@@ -214,25 +214,17 @@ def update_lam(chi2_record, lam_record):
     return(new_lam)
 
 
-def _invert_(
-        fName, mesh, lam=20, err=0.05, opt=False, chi2_lims=(0.9, 1.1),
-        ref=False, ref_fName=None, i_max=10, blocky=False,
-        ):
+def _invert_(fName, mesh, lam=20, absoluteError=0.0005, relativeError=0.05, opt=False, chi2_lims=(0.9, 1.1), ref=False, ref_fName=None, i_max=10, blocky=False):
     """ args are passed to ERTManager, run optimize inversion, and saves to para_mesh """
-    print('\n\n\n')
-    print('fName', fName)
-    print('opt: ', opt)
-    print('lam: ', lam)
-    print('\n')
+    opening_string = '\n\n\nfName: {}\nOpt: {}\nlam: {}\n'.format(fName, opt, lam)
+    print(opening_string)
     data = pg.load(fName)
     ertmgr = ert.ERTManager()
-    data['err'] = ertmgr.estimateError(data, absoluteError=0.001, relativeError=err)
+    data['err'] = ertmgr.estimateError(data, absoluteError=absoluteError, relativeError=relativeError)
     mesh = pg.load(mesh)
     ertmgr.fop.setMesh(mesh)
-    print(blocky)
     ertmgr.inv.inv.setBlockyModel(blocky)
 
-    print('opt is: ', opt)
     if opt:
         chi_min = chi2_lims[0]
         chi_max = chi2_lims[1]
@@ -266,12 +258,12 @@ def _invert_(
                 data=data, lam=lam,
                 startModel=ref_model, startModelIsReference=smr,
                 verbose=True,
-                )
+            )
         else:
             _ = ertmgr.invert(
                 data=data, lam=lam,
                 verbose=True,
-                )
+            )
 
         chi2 = ertmgr.inv.chi2()
         chi2_record.append(chi2)
@@ -288,16 +280,16 @@ def invert(**kargs):
     args = update_args(cmd_args, dict_args=kargs)
     args = check_args(args)
     for f in args.fName:
-        print('\n', '-'*80, '\n', f)
-        print(f)
+        print('\n', '-' * 80, '\n', f)
         f_root, f_ext = os.path.splitext(f)
-        out_inv_vtk = os.path.join(args.inv_dir, f_root + args.inv_vtk)
-        out_inv_png = os.path.join(args.inv_dir, f_root + args.inv_png)
-        out_pareto_vtk = os.path.join(args.pareto_dir, f_root + args.pareto_vtk)
-        out_pareto_csv = os.path.join(args.pareto_dir, f_root + args.pareto_csv)
-        out_pareto_png = os.path.join(args.pareto_dir, f_root + args.pareto_png)
-        out_misfit_png = os.path.join(args.misfit_dir, f_root + args.misfit_png)
-        out_misfit_csv = os.path.join(args.misfit_dir, f_root + args.misfit_csv)
+        print('file root is {} and file extension is {}'.format(f_root, f_ext))
+        out_inv_vtk = os.path.normpath(os.path.join(args.inv_dir, f_root + args.inv_vtk))
+        out_inv_png = os.path.normpath(os.path.join(args.inv_dir, f_root + args.inv_png))
+        out_pareto_vtk = os.path.normpath(os.path.join(args.pareto_dir, f_root + args.pareto_vtk))
+        out_pareto_csv = os.path.normpath(os.path.join(args.pareto_dir, f_root + args.pareto_csv))
+        out_pareto_png = os.path.normpath(os.path.join(args.pareto_dir, f_root + args.pareto_png))
+        out_misfit_png = os.path.normpath(os.path.join(args.misfit_dir, f_root + args.misfit_png))
+        out_misfit_csv = os.path.normpath(os.path.join(args.misfit_dir, f_root + args.misfit_csv))
         if not os.path.isdir(args.pareto_dir):
             os.mkdir(args.pareto_dir)
         if not os.path.isdir(args.misfit_dir):
@@ -306,10 +298,15 @@ def invert(**kargs):
             os.mkdir(args.inv_dir)
 
         ertmgr, r_lam, r_chi2, r_model = _invert_(
-            fName=f, mesh=args.mesh, lam=args.lam,
-            err=args.err, opt=args.opt, blocky=args.blocky,
-            chi2_lims=args.chi2_lims, ref=args.ref,
-            )
+            fName=f,
+            mesh=args.mesh,
+            lam=args.lam,
+            relativeError=args.err,
+            opt=args.opt,
+            blocky=args.blocky,
+            chi2_lims=args.chi2_lims,
+            ref=args.ref,
+        )
 
         save_inv_vtk(ertmgr, out_inv_vtk)
         save_misfit_csv(ertmgr, out_misfit_csv)

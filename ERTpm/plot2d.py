@@ -1,6 +1,7 @@
 import argparse
 import numpy as np
 import pyvista as pv
+from IPython import embed
 
 
 def get_cmd():
@@ -78,7 +79,7 @@ def _plot_(f, args):
     mesh = pv.read(f)
     mesh = prepare_rho(mesh=mesh, rho=args.rho, dName=args.dName, dHow=args.dHow)
     mesh = prepare_cov(mesh=mesh, cov=args.cov, min_cov=0.05)
-    sba = dict(width=0.5, position_x=0.25, height=0.1, position_y=0.025)
+    sba = dict(title='resistivity ohm m\n', width=0.5, position_x=0.25, height=0.1, position_y=0.025)
     plotter = pv.Plotter(window_size=(1300, 600))
     # select region
     if args.clipping == 'cov':
@@ -91,27 +92,32 @@ def _plot_(f, args):
     # camera
     length = mesh.GetLength()
     bounds = mesh.GetBounds()
-    print(bounds)
     xc = (bounds[1] + bounds[0]) / 2
     yc = (bounds[3] + bounds[2]) * 2.5 / 4
     cam = [[xc, yc, length], [xc, yc, 0], [0, 1, 0]]
     plotter.camera_position = cam
     # mesh and data
-    _ = plotter.add_mesh(mesh, scalars=args.rho, opacity=args.cov,
-                         show_edges=False, edge_color='k',
-                         show_scalar_bar=True, scalar_bar_args=sba, stitle='resistivity ohm m\n',
-                         cmap=args.Cmap, clim=(args.Cmin, args.Cmax))
+    _ = plotter.add_mesh(
+        mesh, scalars=args.rho, opacity=args.cov,
+        show_edges=False, edge_color='k',
+        show_scalar_bar=True, scalar_bar_args=sba,
+        cmap=args.Cmap, clim=(args.Cmin, args.Cmax)
+    )
     # electrodes
     electrodes = np.zeros((64, 3))
     electrodes[:, 0] = np.arange(0, 32, 0.5)
     electrodes = pv.PolyData(electrodes)
-    electrodes["elec_num"] = ["{}".format(i+1) for i in range(electrodes.n_points)]
+    electrodes_labels = ["{}".format(i + 1) for i in range(electrodes.n_points)]
+    electrodes["elec_num"] = electrodes_labels
     plotter.add_point_labels(electrodes, "elec_num", font_size=14, point_size=5, shape=None, point_color='k')
-    # notes
-    for k, v in args.notes.items():
-        coordinates = pv.PolyData(np.array(v))
-        coordinates['name'] = [k]
-        plotter.add_point_labels(coordinates, 'name', font_size=14, point_size=5, shape=None, point_color='k')
+    # add optional notes if present
+    if args.notes is not None:
+        for k, v in args.notes.items():
+            coordinates = pv.PolyData(np.array(v))
+            coordinates['name'] = [k]
+            plotter.add_point_labels(
+                coordinates, 'name', font_size=14, point_size=5, shape=None, point_color='k'
+            )
     # bounds
     _ = plotter.show_bounds(mesh=mesh, grid=args.Cgrid,
                             location='outer', ticks=args.ticks, font_size=args.Fsize,
@@ -128,7 +134,7 @@ def plot2d(**kargs):
     args = check_args(args)
     pv.set_plot_theme("document")
     for f in args.fName:
-        print('\n', '-'*80, '\n', f)
+        print('\n', '-' * 80, '\n', f)
         print(f)
         fpng = _plot_(f, args)
         yield(fpng)

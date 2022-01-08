@@ -1,6 +1,5 @@
 import numpy as np
 from scipy.stats import skew
-from scipy.stats import variation
 from matplotlib.ticker import Locator
 import matplotlib.pyplot as plt
 import math
@@ -14,7 +13,7 @@ def find_threshold_minnonzero(values, min_threshold=0.00001):
     return(threshold)
 
 
-def find_best_yscale(values, lim_var=0.6, lim_skew=0.6):
+def find_best_yscale(values, lim_var=0.8, lim_skew=0.8):
     values = np.array(values)
     scale = 'linear'
     if len(values) == 0:

@@ -2,13 +2,15 @@
 
 ## Description ##
 
-This package provides some convenient functions for handling ERT processing, inversion and visualization with particular focus on the project and time-lapse datasets.
+A library for processing, invert, and visualize ERT datasets, with particular focus on time-lapse projects.
 
-*Manager* organizes the datasets and ERT parameters, it calls calls *process*, *invert*, and *plot*.
-Default values for the parameters (arguments) of each module are described and stored through argparse.
+<p align="center"><img src="ERTpm.png" width=600 border=60></p>
+
+*Manager* is the pipeline managent molude, it organizes the ERT datasets and then delegates to the *process*, *invert*, and *plot* modules with suitable and consistent arguments.
+Default values for the parameters (arguments) of each module are described and stored via argparse.
 This also allows each module to be called directly from the command-line, bypassing the ert *manager* module.
-When called from the ert *manager* the argparse arguments are updated based on the ert manager inputs.
-This way generic-default values are given in each module (also as example) but each project can store modified values and call the modules with a simple *manager* API.
+Instead, when calling via *manager*, a dictionary is passed to each module to update its argparse default values.
+This way generic-default values are given in each module but each project can store specific values with a simple *manager* API.
 In practice, each module follows these same steps:
     1. check cmd-line args and possibly update argparse default values.
     2. update arguments in case the module is called from the manager with new arguments.

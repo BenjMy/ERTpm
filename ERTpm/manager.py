@@ -68,7 +68,7 @@ def select_table(table, which, col_check, col_needed):
 
 
 # some default values
-table_name = 'ert_datasets.txt'
+table_name = 'ert_datasets.csv'
 table_headers = ['file', 'datetime', 'process', 'invert', 'plot', 'fcsv', 'finv', 'fvtk', 'fpng']
 table_dtypes = {'file': str, 'datetime': 'datetime64[ns]',
                 'process': bool, 'invert': bool, 'plot': bool,
@@ -118,10 +118,7 @@ if __name__ == '__main__':
                 f = r['file']
                 finv = r['finv']
                 fref = None
-                fyield = invert(
-                    fName=finv, mesh='mesh/mesh.bms',
-                    lam=400, err=0.05, opt=True
-                )
+                fyield = invert(fName=finv, mesh='mesh/mesh.bms', lam=400, err=0.05, opt=True)
                 fvtk = next(fyield)
                 table.loc[table['file'] == f, ['invert', 'fvtk']] = True, fvtk
             table = update_table(table, table_name, data_ext)
