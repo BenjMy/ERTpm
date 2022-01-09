@@ -34,5 +34,5 @@ However, editable installation has several advantages as pip and python take car
 
 ## Usage ##
 
-Regarding the usage of the manager module, see example in ./tests.
-For the command-line interface, see the argparse --help command of each pipeline module.
+Regarding the usage of the manager module, see the example in `./tests`.
+For the command-line interface, see the argparse `--help` command of each pipeline module.
